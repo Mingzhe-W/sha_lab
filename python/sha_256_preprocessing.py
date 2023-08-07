@@ -18,10 +18,32 @@ def padding(m):
     l = len(m) * 8
     # append a single "1", here we actually append 0x80 which is "10000000", "1" followed by 7 "0" 
     m.append(0x80)
+
+    # while its not mutiple of 512 
+    # add <k zeros>
+    while( (len(m)*8 + 64) % 512 != 0 ):
+        m.append(0x00)
+
+    # above padding scheme should work with string, but not necessarily for other types, because for string, it length is always
+    # a multiple of byte, aka, 8 bits. 
+    # if you want to extend this functionality to other type, you should change the padding scheme.
+
+    # append <l as 64 bits integer in big-endian>
+    m.extend(l.to_bytes(8, "big"))
+
     return m
 
+def chunk_divider(m):
+    # braking m into N chunk of 512 bits (64 Bytes) blocks M_i (i = 0 to N - 1 )
+    
 
-
-
+    def divide(list, n):
+        # n is the len of each chunk
+        for i in range(0, len(list), n):
+            yield list[i: i + n]
+    
+    M = list(divide(m, 64))
+    return M
+    
 
 
